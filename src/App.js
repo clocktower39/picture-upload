@@ -1,9 +1,12 @@
 import './App.css';
 import User from './User';
+import { Container } from '@material-ui/core'; 
 
 function App() {
   return (
-    <User />
+    <Container maxWidth="md">
+      <User />
+    </Container>
   );
 }
 
