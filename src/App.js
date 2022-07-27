@@ -1,6 +1,6 @@
 import './App.css';
 import User from './User';
-import { Container } from '@material-ui/core'; 
+import { Container } from '@mui/material'; 
 
 function App() {
   return (
