@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, Button, Grid, Input, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete, Avatar, Button, Grid, Input, Stack, TextField, Typography } from "@mui/material";
 import axios from "axios";
 
 const classes = {
@@ -12,6 +12,7 @@ const classes = {
 
 const User = () => {
   const [userList, setUserList] = useState([]);
+  const [selectedUser, setSelectedUser] = useState('');
   const [newUser, setNewUser] = useState({
     name: "",
     photo: "",
@@ -34,16 +35,17 @@ const User = () => {
       });
   };
 
-  const handleChange = (e) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e, selection) => {
+    setSelectedUser(selection);
+    setNewUser({ ...newUser, name: selection})
+}
 
   const handlePhoto = (e) => {
     setNewUser({ ...newUser, photo: e.target.files[0] });
   };
 
   useEffect(() => {
-    fetch('http://192.168.56.1:5000/users').then(res => res.json()).then(data => setUserList([...data]));
+    fetch('http://localhost:5000/users').then(res => res.json()).then(data => setUserList([...data]));
     //secondary option
   }, [])
 
@@ -53,7 +55,7 @@ const User = () => {
         <Stack>
           {userList.length > 0 && userList.map(user => (
             <>
-              <Avatar key={user.username} src={`http://localhost:5000/image/${user.profilePicture}`} />
+              <Avatar key={user.username} src={user.profilePicture ? `http://localhost:5000/image/${user.profilePicture}` : null} />
               <Typography variant="caption" >Username: {user.username}</Typography>
             </>
           ))}
@@ -61,13 +63,23 @@ const User = () => {
       </Grid>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
 
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <TextField
             type="text"
             placeholder="Username"
             name="name"
             value={newUser.name}
             onChange={handleChange}
+          />
+        </Grid> */}
+        <Grid item xs={12}>
+          <Autocomplete
+            fullWidth
+            value={selectedUser}
+            options={userList.map(user => user.username)}
+            onChange={handleChange}
+            isOptionEqualToValue={(option, value) => option.username === value.username}
+            renderInput={(params) => <TextField {...params} label="User" />}
           />
         </Grid>
 
